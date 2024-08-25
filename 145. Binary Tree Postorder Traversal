@@ -1,0 +1,36 @@
+    /*
+
+    MD. RAFIULLAH AL NAIM
+    UNIVERSITY : UNIVERSITY OF ASIA PACIFIC
+    STUDENT ID : 22101150 (UAP,DHAKA,BANGLADESH)
+    COLLEGE : ADAMJEE CANTONMENT COLLEGE
+    STUDENT ID : 181063 (ACC,DHAKA,BANGLADESH)
+
+    */
+
+class Solution {
+ public:
+  vector<int> postorderTraversal(TreeNode* root) {
+    vector<int> result;
+    stack<TreeNode*> s;
+    TreeNode* lastVisited = nullptr;
+
+    while (root || !s.empty()) {
+      if (root) {
+        s.push(root);
+        root = root->left;
+      } else {
+        TreeNode* node = s.top();
+        if (node->right && lastVisited != node->right) {
+          root = node->right;
+        } else {
+          result.push_back(node->val);
+          lastVisited = node;
+          s.pop();
+        }
+      }
+    }
+
+    return result;
+  }
+};
