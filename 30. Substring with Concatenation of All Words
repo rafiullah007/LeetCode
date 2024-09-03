@@ -2,39 +2,54 @@ class Solution {
 public:
     std::vector<int> findSubstring(std::string s, std::vector<std::string>& words) {
         std::vector<int> result;
-        if (words.empty() || s.empty()) {
-            return result;
-        }
+        if (s.empty() || words.empty()) return result;
+
         int wordLength = words[0].length();
         int wordCount = words.size();
         int totalLength = wordLength * wordCount;
-        if (totalLength > s.length()) {
-            return result;
-        }
+
+        if (s.length() < totalLength) return result;
+
+        
         std::unordered_map<std::string, int> wordMap;
         for (const auto& word : words) {
             ++wordMap[word];
         }
-        for (int i = 0; i <= s.length() - totalLength; ++i) {
-            std::unordered_map<std::string, int> seen;
-            int j = 0;
-            for (; j < wordCount; ++j) {
-                std::string currentWord = s.substr(i + j * wordLength, wordLength);
 
-                if (wordMap.find(currentWord) == wordMap.end()) {
-                    break;
+        
+        for (int i = 0; i < wordLength; ++i) {
+            int left = i, right = i;
+            std::unordered_map<std::string, int> windowMap;
+            int count = 0;
+
+            
+            while (right + wordLength <= s.length()) {
+                std::string word = s.substr(right, wordLength);
+                right += wordLength;
+
+               
+                if (wordMap.find(word) != wordMap.end()) {
+                    ++windowMap[word];
+                    ++count;
+
+                    
+                    while (windowMap[word] > wordMap[word]) {
+                        std::string leftWord = s.substr(left, wordLength);
+                        --windowMap[leftWord];
+                        --count;
+                        left += wordLength;
+                    }
+
+                    
+                    if (count == wordCount) {
+                        result.push_back(left);
+                    }
+                } else {
+                    
+                    windowMap.clear();
+                    count = 0;
+                    left = right;
                 }
-
-                ++seen[currentWord];
-
-                if (seen[currentWord] > wordMap[currentWord]) {
-                    break;
-                }
-            }
-
-
-            if (j == wordCount) {
-                result.push_back(i);
             }
         }
 
